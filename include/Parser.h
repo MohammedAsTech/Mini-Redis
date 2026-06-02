@@ -5,25 +5,25 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "Command.h"
 
-class ICommand;
 
 class Parser {
 public:
     Parser();
 
     // Convert a raw CLI line into a command object.
-    std::unique_ptr<ICommand> parse(const std::string& line) const;
+    std::unique_ptr<Command> parse(const std::string& line) const;
 
 private:
     using ParseFunction =
-        std::function<std::unique_ptr<ICommand>(const std::string&)>;
+        std::function<std::unique_ptr<Command>(const std::string&)>;
 
     using OneArgCreator =
-        std::function<std::unique_ptr<ICommand>(const std::string&)>;
+        std::function<std::unique_ptr<Command>(const std::string&)>;
 
     using NoArgCreator =
-        std::function<std::unique_ptr<ICommand>()>;
+        std::function<std::unique_ptr<Command>()>;
 
     struct OneArgRegistration {
         std::string name;
@@ -45,19 +45,19 @@ private:
     void registerSetCommand();
 
     // Parsing helpers
-    static std::unique_ptr<ICommand> parseSet(const std::string& args);
+    static std::unique_ptr<Command> parseSet(const std::string& args);
 
-    static std::unique_ptr<ICommand> parseOneKeyCommand(
+    static std::unique_ptr<Command> parseOneKeyCommand(
         const std::string& args,
         const OneArgCreator& creator
     );
 
-    static std::unique_ptr<ICommand> parseNoArgCommand(
+    static std::unique_ptr<Command> parseNoArgCommand(
         const std::string& args,
         const NoArgCreator& creator
     );
 
-    static std::unique_ptr<ICommand> parseFileCommand(
+    static std::unique_ptr<Command> parseFileCommand(
         const std::string& args,
         const OneArgCreator& creator
     );

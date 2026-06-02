@@ -1,3 +1,73 @@
-//
-// Created by moham on 02/06/2026.
-//
+#include "Parser.h"
+
+#include "CommandSons.h"
+#include "Command.h"
+#include <vector>
+#include <cctype>
+#include <sstream>
+using namespace std;
+
+Parser::Parser() {
+
+    std::vector<OneArgRegistration> oneKeyCommands = {
+        {"GET", [](const std::string& key) -> std::unique_ptr<Command> {
+            return std::make_unique<GetCommand>(key);
+        }},
+        {"DEL", [](const std::string& key) -> std::unique_ptr<Command> {
+            return std::make_unique<DelCommand>(key);
+        }},
+        {"EXISTS", [](const std::string& key) -> std::unique_ptr<Command> {
+            return std::make_unique<ExistsCommand>(key);
+        }}
+    };
+
+    registerOneKeyCommands(oneKeyCommands);
+
+    std::vector<NoArgRegistration> noArgCommands = {
+        {"KEYS", []() -> std::unique_ptr<Command> {
+            return std::make_unique<KeysCommand>();
+        }},
+        {"EXIT", []() -> std::unique_ptr<Command> {
+            return std::make_unique<ExitCommand>();
+        }}
+    };
+
+    registerNoArgCommands(noArgCommands);
+
+    std::vector<OneArgRegistration> fileCommands = {
+        {"SAVE", [](const std::string& filename) -> std::unique_ptr<Command> {
+            return std::make_unique<SaveCommand>(filename);
+        }},
+        {"LOAD", [](const std::string& filename) -> std::unique_ptr<Command> {
+            return std::make_unique<LoadCommand>(filename);
+        }}
+    };
+
+    registerFileCommands(fileCommands);
+
+    registerSetCommand();
+}
+std::unique_ptr<Command> Parser::parse(const std::string& line) const {
+    std::string cleanedLine = trim(line);
+
+    if (cleanedLine.empty()) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    std::istringstream iss(cleanedLine);
+
+    std::string commandName;
+    iss >> commandName;
+
+    std::string args;
+    std::getline(iss, args);
+    args = trim(args);
+
+    auto it = parsers.find(commandName);
+
+    if (it == parsers.end()) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    return it->second(args);
+}
