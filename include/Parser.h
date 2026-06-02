@@ -12,6 +12,7 @@ class Parser {
 public:
     Parser();
 
+    // Convert a raw CLI line into a command object.
     std::unique_ptr<ICommand> parse(const std::string& line) const;
 
 private:
@@ -34,13 +35,16 @@ private:
         NoArgCreator creator;
     };
 
+    // Command name -> parser function
     std::unordered_map<std::string, ParseFunction> parsers;
 
+    // Register command groups
     void registerOneKeyCommands(const std::vector<OneArgRegistration>& commands);
     void registerNoArgCommands(const std::vector<NoArgRegistration>& commands);
     void registerFileCommands(const std::vector<OneArgRegistration>& commands);
     void registerSetCommand();
 
+    // Parsing helpers
     static std::unique_ptr<ICommand> parseSet(const std::string& args);
 
     static std::unique_ptr<ICommand> parseOneKeyCommand(
