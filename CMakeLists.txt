@@ -10,6 +10,9 @@ add_executable(MiniRedis
         src/main.cpp
         include/Database.h
         src/Database.cpp
+        src/Parser.cpp
+        include/Parser.h
+        include/Command.h
 )
 
 target_include_directories(MiniRedis PRIVATE
