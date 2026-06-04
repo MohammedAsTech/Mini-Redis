@@ -8,12 +8,16 @@
 
 void SetCommand::execute(Database& db,
                          Persistence& persistence) {
+    (void)persistence;
+
     db.set(key, value);
     std::cout << "OK" << std::endl;
 }
 
 void GetCommand::execute(Database& db,
                          Persistence& persistence) {
+    (void)persistence;
+
     auto result = db.get(key);
 
     if (result.has_value()) {
@@ -26,6 +30,8 @@ void GetCommand::execute(Database& db,
 
 void DelCommand::execute(Database& db,
                          Persistence& persistence) {
+    (void)persistence;
+
     if (db.del(key)) {
         std::cout << "deleted" << std::endl;
     }
@@ -36,12 +42,16 @@ void DelCommand::execute(Database& db,
 
 void ExistsCommand::execute(Database& db,
                             Persistence& persistence) {
+    (void)persistence;
+
     std::cout << (db.exists(key) ? "true" : "false")
               << std::endl;
 }
 
 void KeysCommand::execute(Database& db,
                           Persistence& persistence) {
+    (void)persistence;
+
     auto allKeys = db.keys();
 
     for (const auto& key : allKeys) {
@@ -63,19 +73,29 @@ void LoadCommand::execute(Database& db,
 
 void ExitCommand::execute(Database& db,
                           Persistence& persistence) {
+    (void)db;
+    (void)persistence;
+
     std::cout << "Goodbye" << std::endl;
     std::exit(0);
 }
+
 void RenameCommand::execute(Database& db,
                             Persistence& persistence) {
+    (void)persistence;
+
     if (db.renameKey(key, newKey)) {
         std::cout << "renamed" << std::endl;
-    } else {
+    }
+    else {
         std::cout << "not found" << std::endl;
     }
 }
+
 void HistoryCommand::execute(Database& db,
                              Persistence& persistence) {
+    (void)persistence;
+
     for (const auto& commandLine : db.getHistory()) {
         std::cout << commandLine << std::endl;
     }

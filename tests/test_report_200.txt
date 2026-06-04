@@ -1,0 +1,246 @@
+=========================================
+Mini Redis 200-Test Report
+Date: Thu Jun  4 17:30:40 IDT 2026
+Project: /mnt/c/Users/moham/OneDrive/Desktop/folders/ProjectsForCV/MiniRedisProject
+Sanitizer binary: /tmp/tmp.JSag8pOd23/mini_redis_san
+Report file: /mnt/c/Users/moham/OneDrive/Desktop/folders/ProjectsForCV/MiniRedisProject/tests/test_report_200.txt
+=========================================
+
+[BUILD] Compiling with AddressSanitizer + UndefinedBehaviorSanitizer...
+[BUILD] PASSED
+
+[TESTS] Running 200 behavior tests...
+PASS 001 - SET then GET simple key
+PASS 002 - GET missing key
+PASS 003 - SET overwrite value
+PASS 004 - SET value with spaces
+PASS 005 - SET trims outer value spaces
+PASS 006 - SET numeric-looking value
+PASS 007 - SET symbol value
+PASS 008 - SET empty value rejected
+PASS 009 - SET missing args rejected
+PASS 010 - SET with tab spacing
+PASS 011 - EXISTS true after SET
+PASS 012 - EXISTS false missing
+PASS 013 - EXISTS false after DEL
+PASS 014 - EXISTS invalid no key
+PASS 015 - EXISTS invalid extra arg
+PASS 016 - DEL existing key
+PASS 017 - DEL missing key
+PASS 018 - DEL twice
+PASS 019 - DEL invalid no key
+PASS 020 - DEL invalid extra arg
+PASS 021 - RENAME existing key
+PASS 022 - RENAME missing old key
+PASS 023 - RENAME target already exists
+PASS 024 - RENAME preserves value with spaces
+PASS 025 - RENAME invalid no args
+PASS 026 - RENAME invalid one arg
+PASS 027 - RENAME invalid extra arg
+PASS 028 - RENAME after delete becomes not found
+PASS 029 - RENAME chain
+PASS 030 - RENAME same key reports target exists
+PASS 031 - KEYS includes one key
+PASS 032 - KEYS includes multiple keys
+PASS 033 - KEYS on empty database
+PASS 034 - KEYS invalid extra arg
+PASS 035 - KEYS after delete contains remaining key
+PASS 036 - KEYS after rename contains new key
+PASS 037 - SAVE creates file
+PASS 038 - LOAD restores simple value
+PASS 039 - LOAD replaces current database
+PASS 040 - SAVE LOAD value with spaces
+PASS 041 - SAVE LOAD multiple keys
+PASS 042 - LOAD missing file
+PASS 043 - LOAD corrupted file
+PASS 044 - SAVE invalid no filename
+PASS 045 - SAVE invalid extra arg
+PASS 046 - LOAD invalid no filename
+PASS 047 - LOAD invalid extra arg
+PASS 048 - SAVE bad path
+PASS 049 - SAVE empty database then load
+PASS 050 - SAVE after overwrite keeps latest
+PASS 051 - SAVE after rename keeps new key
+PASS 052 - HISTORY empty
+PASS 053 - HISTORY after one successful command
+PASS 054 - HISTORY stores successful GET
+PASS 055 - HISTORY does not store failed parse
+PASS 056 - HISTORY does not store failed execution
+PASS 057 - HISTORY invalid extra arg
+PASS 058 - HISTORY keeps original spaces
+PASS 059 - HISTORY includes SAVE after success
+PASS 060 - HISTORY includes RENAME success
+PASS 061 - HISTORY limit keeps last 20
+PASS 062 - Unknown command ABC
+PASS 063 - Unknown typo GETT
+PASS 064 - Lowercase set is unknown
+PASS 065 - Mixed case Get is unknown
+PASS 066 - Empty line invalid
+PASS 067 - Spaces-only line invalid
+PASS 068 - Tabs-only line invalid
+PASS 069 - Leading spaces command accepted
+PASS 070 - Trailing spaces command accepted
+PASS 071 - Multiple inner spaces accepted
+PASS 072 - GET trims key spaces
+PASS 073 - DEL trims key spaces
+PASS 074 - RENAME trims args
+PASS 075 - SAVE trims filename
+PASS 076 - LOAD trims filename
+PASS 077 - Value can contain equals
+PASS 078 - Value can contain many spaces inside
+PASS 079 - SET first word is key rest is value single command
+PASS 080 - SET first word is key rest is value then GET
+PASS 081 - GET full spaced key impossible
+PASS 082 - Empty string cannot be key
+PASS 083 - Filename cannot contain spaces in SAVE parser
+PASS 084 - Filename cannot contain spaces in LOAD parser
+PASS 085 - Mixed CRUD scenario
+PASS 086 - Mixed rename delete scenario
+PASS 087 - Load after failed command still works
+PASS 088 - Failed rename does not remove old key
+PASS 089 - Delete old after rename not found
+PASS 090 - Overwrite after load
+PASS 091 - Save load after deleting one key
+PASS 092 - History after many mixed successes
+PASS 093 - History excludes failed middle command
+PASS 094 - Corrupted load does not replace database
+PASS 095 - EXIT command
+PASS 096 - EXIT invalid extra arg
+PASS 097 - 100 repeated SET commands no leak/crash
+PASS 098 - 100 repeated GET missing no leak/crash
+PASS 099 - 100 repeated DEL missing no leak/crash
+PASS 100 - 100 repeated EXISTS missing no leak/crash
+PASS 101 - GET too many args 1
+PASS 102 - GET too many args 2
+PASS 103 - GET no args after spaces
+PASS 104 - DEL too many args 1
+PASS 105 - DEL too many args 2
+PASS 106 - EXISTS too many args 1
+PASS 107 - EXISTS too many args 2
+PASS 108 - RENAME too many args many
+PASS 109 - SAVE many spaces no filename
+PASS 110 - LOAD many spaces no filename
+PASS 111 - KEYS with many args invalid
+PASS 112 - HISTORY with many args invalid
+PASS 113 - EXIT with many args invalid
+PASS 114 - Unknown with args
+PASS 115 - Command with lowercase letters unknown
+PASS 116 - Command with punctuation unknown
+PASS 117 - Command with number unknown
+PASS 118 - Two blank lines invalid twice
+PASS 119 - Line with carriage return spaces invalid
+PASS 120 - SET value can begin after tabs
+PASS 121 - Overwrite then delete then get
+PASS 122 - Delete does not affect another key
+PASS 123 - Rename does not affect another key
+PASS 124 - Rename old disappears
+PASS 125 - Rename then overwrite new
+PASS 126 - Delete renamed key
+PASS 127 - Target exists after delete allowed
+PASS 128 - Rename missing does not create target
+PASS 129 - Rename value with equals
+PASS 130 - Rename value with tabs preserved as spaces after parse
+PASS 131 - Exists after overwrite
+PASS 132 - Exists after failed rename target exists
+PASS 133 - Del after failed rename removes original
+PASS 134 - Keys after all deletes empty
+PASS 135 - Keys after overwrite one key
+PASS 136 - GET after many overwrites
+PASS 137 - DEL after many overwrites
+PASS 138 - EXISTS after load missing
+PASS 139 - GET after load empty db
+PASS 140 - DEL after load empty db
+PASS 141 - Save two different files first
+PASS 142 - Load first saved file
+PASS 143 - Load second saved file
+PASS 144 - SET missing value then SAVE still saves empty database
+PASS 145 - Save load symbol heavy value
+PASS 146 - Save load long value
+PASS 147 - Load after corrupted file keeps previous key
+PASS 148 - Load missing file keeps previous key
+PASS 149 - Save after failed load still saves old db
+PASS 150 - Save load after deleting all keys
+PASS 151 - Save load keys after rename and delete
+PASS 152 - Repeated save same file latest state
+PASS 153 - Repeated load same file stable
+PASS 154 - Load file after changing db replaces all
+PASS 155 - Save load tab value
+PASS 156 - Save load equals value
+PASS 157 - Save load value with separator text
+PASS 158 - Bad save path does not kill program
+PASS 159 - Bad load path does not kill program
+PASS 160 - Save load after many commands
+PASS 161 - History includes DEL success
+PASS 162 - History includes missing GET success
+PASS 163 - History includes DEL missing success
+PASS 164 - History includes EXISTS success
+PASS 165 - History includes KEYS success
+PASS 166 - History excludes unknown command
+PASS 167 - History excludes invalid SAVE
+PASS 168 - History excludes invalid LOAD
+PASS 169 - History excludes invalid RENAME
+PASS 170 - History after SAVE and LOAD
+PASS 171 - History after failed target rename excludes rename
+PASS 172 - History after missing rename includes rename
+PASS 173 - History limit after 21 commands starts at 2
+PASS 174 - History exactly 20 commands
+PASS 175 - History stores original tabs
+PASS 176 - History after keys empty
+PASS 177 - History after command with trailing spaces
+PASS 178 - History after command with leading spaces
+PASS 179 - History after multiple failed then success
+PASS 180 - History after load corrupted excludes load
+PASS 181 - 200 repeated SET commands
+PASS 182 - 200 repeated GET existing commands
+PASS 183 - 200 repeated overwrite same key
+PASS 184 - 200 repeated DEL missing
+PASS 185 - 200 repeated EXISTS missing
+PASS 186 - 200 keys save load one check
+PASS 187 - 50 rename chain
+PASS 188 - 50 set delete cycle
+PASS 189 - 50 set exists cycle
+PASS 190 - 50 invalid GET commands
+PASS 191 - 50 unknown commands
+PASS 192 - 150 keys contains samples
+PASS 193 - Long history after 40 commands keeps last 20
+PASS 194 - Save load after 100 overwrites
+PASS 195 - Alternating missing and existing gets
+PASS 196 - Alternating exists true false
+PASS 197 - Alternating set rename
+PASS 198 - Alternating save load ten times
+PASS 199 - Large value 500 chars
+PASS 200 - Large number of parser invalids mixed
+
+=========================================
+VALGRIND CHECK
+=========================================
+[VALGRIND] Compiling non-sanitized binary...
+==63853== Memcheck, a memory error detector
+==63853== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==63853== Using Valgrind-3.22.0 and LibVEX; rerun with -h for copyright info
+==63853== Command: /tmp/tmp.JSag8pOd23/mini_redis_valgrind
+==63853== 
+OK
+1
+Database saved
+Database loaded
+==63853== 
+==63853== HEAP SUMMARY:
+==63853==     in use at exit: 0 bytes in 0 blocks
+==63853==   total heap usage: 58 allocs, 58 frees, 102,256 bytes allocated
+==63853== 
+==63853== All heap blocks were freed -- no leaks are possible
+==63853== 
+==63853== For lists of detected and suppressed errors, rerun with: -s
+==63853== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+Valgrind: PASSED
+
+=========================================
+FINAL SUMMARY
+=========================================
+Total behavior tests : 200
+Passed               : 200
+Failed               : 0
+Valgrind             : PASSED
+Report file          : /mnt/c/Users/moham/OneDrive/Desktop/folders/ProjectsForCV/MiniRedisProject/tests/test_report_200.txt
+=========================================
