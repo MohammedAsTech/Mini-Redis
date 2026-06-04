@@ -34,6 +34,12 @@ public:
         return db;
     }
 
+    void clear();
+
+    void replaceEntries(
+        const std::unordered_map<std::string, std::string>& newEntries
+    );
+
 };
 
 #endif //DATABASE_H

@@ -30,6 +30,14 @@ for(const auto& it:db) {
 }
     return res;
 }
+void Database::clear() {
+    db.clear();
+}
 
+void Database::replaceEntries(
+    const std::unordered_map<std::string, std::string>& newEntries
+) {
+    db = newEntries;
+}
 
 
