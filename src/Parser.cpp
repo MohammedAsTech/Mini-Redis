@@ -94,3 +94,14 @@ void Parser::registerNoArgCommands(
         };
     }
 }
+// Registers commands like SAVE, LOAD.
+void Parser::registerFileCommands(
+    const std::vector<OneArgRegistration>& commands
+) {
+    for (const auto& command : commands) {
+        parsers[command.name] =
+            [creator = command.creator](const std::string& args) {
+                return parseFileCommand(args, creator);
+        };
+    }
+}
