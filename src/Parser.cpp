@@ -170,3 +170,21 @@ std::unique_ptr<Command> Parser::parseFileCommand(
 ) {
     return parseOneKeyCommand(args, creator);
 }
+// Removes spaces from beginning and end.
+std::string Parser::trim(const std::string& str) {
+    std::size_t start = 0;
+
+    while (start < str.size() &&
+           std::isspace(static_cast<unsigned char>(str[start]))) {
+        ++start;
+           }
+
+    std::size_t end = str.size();
+
+    while (end > start &&
+           std::isspace(static_cast<unsigned char>(str[end - 1]))) {
+        --end;
+           }
+
+    return str.substr(start, end - start);
+}
