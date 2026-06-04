@@ -1,62 +1,51 @@
 # Mini Redis
 
-> A Redis-inspired in-memory key-value database implemented in Modern C++ using the Command Design Pattern.
+A Redis-inspired in-memory key-value database built in Modern C++.
 
-![Language](https://img.shields.io/badge/language-C%2B%2B17-blue)
-![Architecture](https://img.shields.io/badge/design-command%20pattern-green)
-![Testing](https://img.shields.io/badge/tests-200%2B-success)
-![Memory](https://img.shields.io/badge/valgrind-clean-success)
+This project recreates a simplified version of Redis to demonstrate software engineering fundamentals including object-oriented design, design patterns, parsing, persistence, and memory-safe programming.
 
 ---
 
-## Overview
+## What is Redis?
 
-Mini Redis is a lightweight Redis-inspired database built from scratch in C++.
+Redis is a high-performance in-memory database commonly used for:
 
-The project focuses on software engineering principles rather than raw feature count, emphasizing:
+- Caching
+- Session storage
+- Real-time applications
+- Message queues
+- Fast key-value lookups
 
-- Object-Oriented Design
-- Design Patterns
-- Memory Safety
-- Extensibility
-- File Persistence
-- Automated Testing
-- Clean Architecture
-
-The database stores key-value pairs in memory and supports common Redis-style operations such as insertion, retrieval, deletion, persistence, and history tracking.
+Unlike traditional databases, Redis stores data primarily in memory, allowing extremely fast access times.
 
 ---
 
-## Features
+## What does this project implement?
 
-### Database Operations
+This Mini Redis supports a subset of Redis-like functionality.
 
-| Command | Description |
-|----------|-------------|
-| `SET` | Insert or update a key-value pair |
-| `GET` | Retrieve a value |
-| `DEL` | Delete a key |
-| `EXISTS` | Check whether a key exists |
-| `KEYS` | Display all stored keys |
-| `RENAME` | Rename an existing key |
+### Data Operations
+
+- `SET` – Create or update values
+- `GET` – Retrieve values
+- `DEL` – Delete keys
+- `EXISTS` – Check whether a key exists
+- `KEYS` – Display all stored keys
+- `RENAME` – Rename existing keys
 
 ### Persistence
 
-| Command | Description |
-|----------|-------------|
-| `SAVE` | Save database to disk |
-| `LOAD` | Load database from disk |
+- `SAVE` – Save database state to disk
+- `LOAD` – Restore database state from disk
 
-### Utility Commands
+### Utility
 
-| Command | Description |
-|----------|-------------|
-| `HISTORY` | Show command history |
-| `EXIT` | Exit the application |
+- `HISTORY` – Display recently executed commands
+- `EXIT` – Terminate the application
 
 ---
 
-# Example Session
+## Example Session
 
 ```text
 SET name Mohammed
@@ -83,60 +72,19 @@ Database loaded
 
 ---
 
-# Project Structure
+## Architecture
 
-```text
-MiniRedisProject/
-│
-├── include/
-│   ├── Command.h
-│   ├── CommandSons.h
-│   ├── Database.h
-│   ├── Parser.h
-│   └── Persistence.h
-│
-├── src/
-│   ├── CommandSons.cpp
-│   ├── Database.cpp
-│   ├── Parser.cpp
-│   ├── Persistence.cpp
-│   └── main.cpp
-│
-├── tests/
-│   ├── test_mini_redis_200.sh
-│   └── test_report_200.txt
-│
-├── README.md
-└── CMakeLists.txt
-```
+The project is divided into four main components.
 
----
+### Database
 
-# Architecture
-
-The system is composed of four main components.
-
-## Database
-
-Responsible for storing all key-value pairs.
-
-Internally:
+Stores key-value pairs using:
 
 ```cpp
 std::unordered_map<std::string, std::string>
 ```
 
-Responsibilities:
-
-- Store data
-- Delete data
-- Rename keys
-- Manage command history
-- Expose entries for persistence
-
----
-
-## Parser
+### Parser
 
 Converts raw user input into executable command objects.
 
@@ -152,22 +100,11 @@ becomes:
 SetCommand("username", "Mohammed")
 ```
 
-The parser uses a registry-based dispatch mechanism:
+### Command System
 
-```cpp
-std::unordered_map<std::string,
-                   std::unique_ptr<ICommandParser>>
-```
+Uses the **Command Design Pattern**.
 
-This allows new commands to be added without modifying existing parser logic.
-
----
-
-## Command Layer
-
-The project uses the **Command Design Pattern**.
-
-Each command is represented by its own class:
+Each command is implemented as an independent class:
 
 ```text
 SetCommand
@@ -182,329 +119,43 @@ HistoryCommand
 ExitCommand
 ```
 
-All commands inherit from:
+### Persistence
 
-```cpp
-class Command
-```
-
-and implement:
-
-```cpp
-virtual void execute(
-    Database& db,
-    Persistence& persistence
-) = 0;
-```
-
-Benefits:
-
-- Separation of concerns
-- Extensibility
-- Cleaner testing
-- Low coupling
-- High cohesion
+Responsible for saving and loading database contents from disk.
 
 ---
 
-## Persistence
+## Time Complexity
 
-Responsible for saving and loading the database.
+| Command | Average Complexity |
+|----------|----------|
+| SET | O(1) |
+| GET | O(1) |
+| DEL | O(1) |
+| EXISTS | O(1) |
+| RENAME | O(1) |
+| KEYS | O(n) |
+| SAVE | O(n) |
+| LOAD | O(n) |
+| HISTORY | O(h), h ≤ 20 |
+| EXIT | O(1) |
 
-Responsibilities:
-
-- Serialize database contents
-- Deserialize database contents
-- Detect corrupted files
-- Handle file-related errors
-
----
-
-# Design Pattern
-
-## Command Pattern
-
-Workflow:
-
-```text
-User Input
-     │
-     ▼
-   Parser
-     │
-     ▼
-Command Object
-     │
-     ▼
- execute()
-     │
-     ▼
-Database / Persistence
-```
-
-Advantages:
-
-- Encapsulates behavior
-- Makes commands independent
-- Simplifies adding new features
-- Improves maintainability
+> `n` = number of stored keys
 
 ---
 
-# Supported Commands
+## Error Handling
 
----
-
-## SET
-
-Insert or update a key.
-
-### Syntax
-
-```text
-SET <key> <value>
-```
-
-### Example
-
-```text
-SET username Mohammed
-```
-
-### Output
-
-```text
-OK
-```
-
-### Complexity
-
-| Case | Complexity |
-|--------|------------|
-| Average | O(1) |
-| Worst | O(n) |
-
----
-
-## GET
-
-Retrieve a value.
-
-### Syntax
-
-```text
-GET <key>
-```
-
-### Example
-
-```text
-GET username
-```
-
-### Output
-
-```text
-Mohammed
-```
-
-Missing key:
-
-```text
-(nil)
-```
-
-### Complexity
-
-| Case | Complexity |
-|--------|------------|
-| Average | O(1) |
-| Worst | O(n) |
-
----
-
-## DEL
-
-Delete a key.
-
-### Syntax
-
-```text
-DEL <key>
-```
-
-### Complexity
-
-| Case | Complexity |
-|--------|------------|
-| Average | O(1) |
-| Worst | O(n) |
-
----
-
-## EXISTS
-
-Check whether a key exists.
-
-### Syntax
-
-```text
-EXISTS <key>
-```
-
-### Complexity
-
-| Case | Complexity |
-|--------|------------|
-| Average | O(1) |
-| Worst | O(n) |
-
----
-
-## KEYS
-
-Display all keys.
-
-### Syntax
-
-```text
-KEYS
-```
-
-### Complexity
-
-```text
-O(n)
-```
-
-where:
-
-```text
-n = number of stored keys
-```
-
----
-
-## RENAME
-
-Rename a key.
-
-### Syntax
-
-```text
-RENAME <oldKey> <newKey>
-```
-
-### Complexity
-
-| Case | Complexity |
-|--------|------------|
-| Average | O(1) |
-| Worst | O(n) |
-
----
-
-## SAVE
-
-Save database contents to disk.
-
-### Syntax
-
-```text
-SAVE <filename>
-```
-
-### Complexity
-
-```text
-O(n)
-```
-
-All entries must be written.
-
----
-
-## LOAD
-
-Load database contents from disk.
-
-### Syntax
-
-```text
-LOAD <filename>
-```
-
-### Complexity
-
-```text
-O(n)
-```
-
-All entries must be reconstructed.
-
----
-
-## HISTORY
-
-Display the last executed commands.
-
-### Syntax
-
-```text
-HISTORY
-```
-
-History size:
-
-```text
-20 commands
-```
-
-### Complexity
-
-| Operation | Complexity |
-|------------|------------|
-| Insert History Entry | O(1) |
-| Print History | O(h) |
-
-where:
-
-```text
-h ≤ 20
-```
-
----
-
-## EXIT
-
-Exit the application.
-
-### Syntax
-
-```text
-EXIT
-```
-
-### Complexity
-
-```text
-O(1)
-```
-
----
-
-# Error Handling
-
-Handled cases include:
+The application handles:
 
 - Unknown commands
-- Invalid syntax
+- Invalid command syntax
 - Missing files
 - Corrupted files
 - Invalid rename operations
 - Invalid persistence paths
 
-Examples:
+Example outputs:
 
 ```text
 Unknown command
@@ -524,40 +175,18 @@ Corrupted file
 
 ---
 
-# Memory Management
-
-The project exclusively uses:
-
-```cpp
-std::unique_ptr
-```
-
-for ownership management.
-
-Benefits:
-
-- No manual memory management
-- RAII-compliant design
-- Automatic cleanup
-- Memory-safe command dispatch
-
----
-
-# Testing
+## Testing
 
 The project includes:
 
 - 200+ automated integration tests
 - Parser validation tests
 - Persistence tests
-- History tests
 - Stress tests
 - AddressSanitizer checks
-- Valgrind checks
+- Valgrind memory checks
 
----
-
-## Valgrind Result
+Valgrind result:
 
 ```text
 All heap blocks were freed -- no leaks are possible
@@ -566,9 +195,9 @@ ERROR SUMMARY: 0 errors
 
 ---
 
-# Build
+## Build
 
-## Linux
+### Linux
 
 ```bash
 g++ -std=c++17 \
@@ -587,43 +216,36 @@ Run:
 
 ---
 
-# Future Improvements
-
-Potential future features:
-
-- TTL support
-- Transactions
-- Publish / Subscribe
-- Multiple databases
-- Networking support
-- Concurrent access
-- Snapshot persistence
-- AOF logging
-- Custom hashing strategies
-
----
-
-# Skills Demonstrated
+## Skills Demonstrated
 
 - Modern C++
 - STL
 - Object-Oriented Programming
-- SOLID Principles
 - Design Patterns
 - Parsing
 - File I/O
 - Memory Management
 - Testing
 - Software Architecture
-- Data Structures
 - Complexity Analysis
 
 ---
 
-# Author
+## Future Improvements
+
+- TTL (Time-To-Live) support
+- Transactions
+- Networking support
+- Multi-database support
+- Concurrent access
+- Snapshot persistence
+
+---
+
+## Author
 
 **Mohammed AbuSalih**
 
 Computer Science Student
 
-Built as a portfolio project to demonstrate software engineering fundamentals, clean architecture, and modern C++ development practices.
+Built as a learning project to explore database internals, software architecture, and modern C++ design.
