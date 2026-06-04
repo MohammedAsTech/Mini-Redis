@@ -24,7 +24,7 @@ public:
 
     optional<string> get(const string& key) const ; //returns the value with the Key key,if not found returns nullopt(have to check)
 
-    void del(const string& key); //deletes the value with the Key key
+    bool del(const string& key); //deletes the value with the Key key
 
     bool exists(const string& key) const;//checks if key is in the database
 

@@ -13,6 +13,7 @@ add_executable(MiniRedis
         src/Parser.cpp
         include/Parser.h
         include/Command.h
+        src/CommandSons.cpp
 )
 
 target_include_directories(MiniRedis PRIVATE

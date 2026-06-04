@@ -3,34 +3,31 @@
 //
 
 #ifndef COMMAND_H
-
 #define COMMAND_H
+
+#include <string>
+
+class Database;
+class Persistence;
+
 class Command {
 protected:
-    std::string commandName;
     std::string key;
-    std::string value;
 
 public:
     Command() = default;
 
-    Command(const std::string& commandName)
-        : commandName(commandName) {}
-
-    Command(const std::string& commandName,
-            const std::string& key)
-        : commandName(commandName),
-          key(key) {}
-
-    Command(const std::string& commandName,
-            const std::string& key,
-            const std::string& value)
-        : commandName(commandName),
-          key(key),
-          value(value) {}
+    explicit Command(const std::string& key)
+        : key(key) {}
 
     virtual ~Command() = default;
+
+    const std::string& getKey() const {
+        return key;
+    }
+
+    virtual void execute(Database& db,
+                         Persistence& persistence) = 0;
 };
 
-
-#endif //COMMAND_H
+#endif // COMMAND_H

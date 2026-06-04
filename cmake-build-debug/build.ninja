@@ -70,6 +70,13 @@ build CMakeFiles/MiniRedis.dir/src/Parser.cpp.obj: CXX_COMPILER__MiniRedis_unsca
   OBJECT_DIR = CMakeFiles\MiniRedis.dir
   OBJECT_FILE_DIR = CMakeFiles\MiniRedis.dir\src
 
+build CMakeFiles/MiniRedis.dir/src/CommandSons.cpp.obj: CXX_COMPILER__MiniRedis_unscanned_Debug C$:/Users/moham/OneDrive/Desktop/folders/ProjectsForCV/MiniRedisProject/src/CommandSons.cpp || cmake_object_order_depends_target_MiniRedis
+  DEP_FILE = CMakeFiles\MiniRedis.dir\src\CommandSons.cpp.obj.d
+  FLAGS = -g -std=c++17 -fdiagnostics-color=always -Wall -Wextra -Wpedantic
+  INCLUDES = -IC:/Users/moham/OneDrive/Desktop/folders/ProjectsForCV/MiniRedisProject/include
+  OBJECT_DIR = CMakeFiles\MiniRedis.dir
+  OBJECT_FILE_DIR = CMakeFiles\MiniRedis.dir\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target MiniRedis
@@ -78,7 +85,7 @@ build CMakeFiles/MiniRedis.dir/src/Parser.cpp.obj: CXX_COMPILER__MiniRedis_unsca
 #############################################
 # Link the executable MiniRedis.exe
 
-build MiniRedis.exe: CXX_EXECUTABLE_LINKER__MiniRedis_Debug CMakeFiles/MiniRedis.dir/src/main.cpp.obj CMakeFiles/MiniRedis.dir/src/Database.cpp.obj CMakeFiles/MiniRedis.dir/src/Parser.cpp.obj
+build MiniRedis.exe: CXX_EXECUTABLE_LINKER__MiniRedis_Debug CMakeFiles/MiniRedis.dir/src/main.cpp.obj CMakeFiles/MiniRedis.dir/src/Database.cpp.obj CMakeFiles/MiniRedis.dir/src/Parser.cpp.obj CMakeFiles/MiniRedis.dir/src/CommandSons.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\MiniRedis.dir

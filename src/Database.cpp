@@ -11,10 +11,11 @@ optional<string> Database::get(const string& key) const {
         return db.find(key)->second;
     return nullopt;
 }
-void Database::del(const string &key) {
+bool Database::del(const string &key) {
     if(!exists(key))
-        return;
+        return false;
     db.erase(key);
+    return true;
 }
 bool Database::exists(const string &key) const {
     auto it = db.find(key);
