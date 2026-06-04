@@ -30,6 +30,10 @@ public:
 
     vector<string> keys() const; //returns all the keys
 
+    const std::unordered_map<std::string, std::string>& entries()const {
+        return db;
+    }
+
 };
 
 #endif //DATABASE_H
