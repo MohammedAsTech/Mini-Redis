@@ -1,24 +1,26 @@
+#include "Parser.h"
+#include "Database.h"
+#include "Persistence.h"
+#include "Command.h"
+#include <exception>
 #include <iostream>
 #include <string>
 
 int main() {
+    Database db;
+    Persistence persistence;
+    Parser parser;
+
     std::string line;
 
-    while (true) {
-        std::cout << "> ";
-
-        std::getline(std::cin, line);
-
-        if (line == "EXIT") {
-            std::cout << "Goodbye" << std::endl;
-            break;
+    while (std::getline(std::cin, line)) {
+        try {
+            auto command = parser.parse(line);
+            command->execute(db, persistence);
         }
-
-        if (line.empty()) {
-            continue;
+        catch (const std::exception& e) {
+            std::cout << e.what() << std::endl;
         }
-
-        std::cout << "Unknown command" << std::endl;
     }
 
     return 0;

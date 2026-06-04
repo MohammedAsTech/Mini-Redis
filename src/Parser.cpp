@@ -7,6 +7,7 @@
 #include <functional>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 namespace {
@@ -59,11 +60,11 @@ public:
         std::string extra;
 
         if (!(iss >> key)) {
-            return std::make_unique<InvalidCommand>();
+            throw std::invalid_argument("Invalid command usage");
         }
 
         if (iss >> extra) {
-            return std::make_unique<InvalidCommand>();
+            throw std::invalid_argument("Invalid command usage");
         }
 
         return creator(key);
@@ -86,7 +87,7 @@ public:
         const std::string& args
     ) const override {
         if (!trim(args).empty()) {
-            return std::make_unique<InvalidCommand>();
+            throw std::invalid_argument("Invalid command usage");
         }
 
         return creator();
@@ -113,7 +114,7 @@ public:
         std::string key;
 
         if (!(iss >> key)) {
-            return std::make_unique<InvalidCommand>();
+            throw std::invalid_argument("Invalid command usage");
         }
 
         std::string value;
@@ -121,7 +122,7 @@ public:
         value = trim(value);
 
         if (value.empty()) {
-            return std::make_unique<InvalidCommand>();
+            throw std::invalid_argument("Invalid command usage");
         }
 
         return std::make_unique<SetCommand>(key, value);
@@ -139,7 +140,7 @@ std::unique_ptr<Command> Parser::parse(
     std::string cleanedLine = trim(line);
 
     if (cleanedLine.empty()) {
-        return std::make_unique<InvalidCommand>();
+        throw std::invalid_argument("Invalid command usage");
     }
 
     std::istringstream iss(cleanedLine);
@@ -154,7 +155,7 @@ std::unique_ptr<Command> Parser::parse(
     auto it = parsers.find(commandName);
 
     if (it == parsers.end()) {
-        return std::make_unique<InvalidCommand>();
+        throw std::invalid_argument("Unknown command");
     }
 
     return it->second->parse(args);
@@ -162,7 +163,6 @@ std::unique_ptr<Command> Parser::parse(
 
 // Build the command registry.
 void Parser::registerCommands() {
-
     parsers["SET"] =
         std::make_unique<SetCommandParser>();
 

@@ -66,8 +66,3 @@ void ExitCommand::execute(Database& db,
     std::cout << "Goodbye" << std::endl;
     std::exit(0);
 }
-
-void InvalidCommand::execute(Database& db,
-                             Persistence& persistence) {
-    std::cout << "Invalid command usage" << std::endl;
-}

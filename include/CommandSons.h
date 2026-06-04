@@ -96,10 +96,5 @@ public:
                  Persistence& persistence) override;
 };
 
-class InvalidCommand : public Command {
-public:
-    void execute(Database& db,
-                 Persistence& persistence) override;
-};
 
 #endif // COMMANDSONS_H
