@@ -66,3 +66,11 @@ void ExitCommand::execute(Database& db,
     std::cout << "Goodbye" << std::endl;
     std::exit(0);
 }
+void RenameCommand::execute(Database& db,
+                            Persistence& persistence) {
+    if (db.renameKey(key, newKey)) {
+        std::cout << "renamed" << std::endl;
+    } else {
+        std::cout << "not found" << std::endl;
+    }
+}

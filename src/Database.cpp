@@ -40,4 +40,22 @@ void Database::replaceEntries(
     db = newEntries;
 }
 
+bool Database::renameKey(const string& oldKey,
+                         const string& newKey) {
+    auto oldIt = db.find(oldKey);
+
+    if (oldIt == db.end()) {
+        return false;
+    }
+
+    if (db.find(newKey) != db.end()) {
+        throw std::runtime_error("target already exists");
+    }
+
+    db[newKey] = oldIt->second;
+    db.erase(oldIt);
+
+    return true;
+}
+
 

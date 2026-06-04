@@ -95,6 +95,18 @@ public:
     void execute(Database& db,
                  Persistence& persistence) override;
 };
+class RenameCommand : public Command {
+private:
+    std::string newKey;
 
+public:
+    RenameCommand(const std::string& oldKey,
+                  const std::string& newKey)
+        : Command(oldKey),
+          newKey(newKey) {}
+
+    void execute(Database& db,
+                 Persistence& persistence) override;
+};
 
 #endif // COMMANDSONS_H

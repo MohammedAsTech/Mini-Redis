@@ -40,6 +40,9 @@ public:
         const std::unordered_map<std::string, std::string>& newEntries
     );
 
+    bool renameKey(const std::string& oldKey,
+               const std::string& newKey); //rename OldKey to newKey
+
 };
 
 #endif //DATABASE_H
