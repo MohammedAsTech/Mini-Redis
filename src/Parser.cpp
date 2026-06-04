@@ -71,3 +71,26 @@ std::unique_ptr<Command> Parser::parse(const std::string& line) const {
 
     return it->second(args);
 }
+// Registers commands like GET, DEL, EXISTS.
+void Parser::registerOneKeyCommands(
+    const std::vector<OneArgRegistration>& commands
+) {
+    for (const auto& command : commands) {
+        parsers[command.name] =
+            [creator = command.creator](const std::string& args) {
+                return parseOneKeyCommand(args, creator);
+        };
+    }
+}
+
+// Registers commands like KEYS, EXIT.
+void Parser::registerNoArgCommands(
+    const std::vector<NoArgRegistration>& commands
+) {
+    for (const auto& command : commands) {
+        parsers[command.name] =
+            [creator = command.creator](const std::string& args) {
+                return parseNoArgCommand(args, creator);
+        };
+    }
+}
