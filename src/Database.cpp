@@ -57,5 +57,12 @@ bool Database::renameKey(const string& oldKey,
 
     return true;
 }
+void Database::addToHistory(const string& commandLine) {
+    history.push_back(commandLine);
+}
+
+const vector<string>& Database::getHistory() const {
+    return history;
+}
 
 

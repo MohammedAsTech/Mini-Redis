@@ -16,6 +16,7 @@ using std::vector;
 class Database {
 private:
     unordered_map<string,string> db;
+    std::vector<std::string> history;
 public:
     Database() = default;
     ~Database() = default;
@@ -42,6 +43,10 @@ public:
 
     bool renameKey(const std::string& oldKey,
                const std::string& newKey); //rename OldKey to newKey
+
+    void addToHistory(const std::string& commandLine);
+
+    const std::vector<std::string>& getHistory() const;
 
 };
 

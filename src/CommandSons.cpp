@@ -74,3 +74,9 @@ void RenameCommand::execute(Database& db,
         std::cout << "not found" << std::endl;
     }
 }
+void HistoryCommand::execute(Database& db,
+                             Persistence& persistence) {
+    for (const auto& commandLine : db.getHistory()) {
+        std::cout << commandLine << std::endl;
+    }
+}

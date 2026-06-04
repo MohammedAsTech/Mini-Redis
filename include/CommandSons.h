@@ -95,6 +95,14 @@ public:
     void execute(Database& db,
                  Persistence& persistence) override;
 };
+class HistoryCommand : public Command {
+public:
+    HistoryCommand() = default;
+
+    void execute(Database& db,
+                 Persistence& persistence) override;
+};
+
 class RenameCommand : public Command {
 private:
     std::string newKey;
@@ -108,5 +116,4 @@ public:
     void execute(Database& db,
                  Persistence& persistence) override;
 };
-
 #endif // COMMANDSONS_H

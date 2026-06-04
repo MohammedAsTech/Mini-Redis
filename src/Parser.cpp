@@ -127,6 +127,32 @@ public:
 
         return std::make_unique<SetCommand>(key, value);
     }
+
+};
+class RenameCommandParser : public CommandParser {
+public:
+    std::unique_ptr<Command>
+    parse(const std::string& args) const override {
+
+        std::istringstream iss(trim(args));
+
+        std::string oldKey;
+        std::string newKey;
+        std::string extra;
+
+        if (!(iss >> oldKey >> newKey)) {
+            throw std::invalid_argument("Invalid command usage");
+        }
+
+        if (iss >> extra) {
+            throw std::invalid_argument("Invalid command usage");
+        }
+
+        return std::make_unique<RenameCommand>(
+            oldKey,
+            newKey
+        );
+    }
 };
 
 Parser::Parser() {
@@ -219,4 +245,12 @@ void Parser::registerCommands() {
                 return std::make_unique<LoadCommand>(filename);
             }
         );
+    parsers["HISTORY"] =
+    std::make_unique<NoArgCommandParser>(
+        []() -> std::unique_ptr<Command> {
+            return std::make_unique<HistoryCommand>();
+        }
+        );
+    parsers["RENAME"] =
+    std::make_unique<RenameCommandParser>();
 }
