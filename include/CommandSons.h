@@ -4,39 +4,67 @@
 
 #ifndef COMMANDSONS_H
 #define COMMANDSONS_H
+
 #include "Command.h"
+#include <string>
+
+// One-key commands: GET key, DEL key, EXISTS key
 class GetCommand : public Command {
 public:
-    GetCommand(const std::string& key);
-
+    explicit GetCommand(const std::string& key)
+        : Command("GET", key) {}
 };
-class SetCommand : public Command {
 
-public:
-    SetCommand(const std::string& key,
-           const std::string& value);
-};
 class DelCommand : public Command {
 public:
-    DelCommand(const std::string& key);
+    explicit DelCommand(const std::string& key)
+        : Command("DEL", key) {}
 };
-class SaveCommand : public Command {
-public:
-    SaveCommand(const std::string& filename);
 
-};
 class ExistsCommand : public Command {
 public:
-    ExistsCommand(const std::string& key);
+    explicit ExistsCommand(const std::string& key)
+        : Command("EXISTS", key) {}
 };
+
+// SET key value
+class SetCommand : public Command {
+public:
+    SetCommand(const std::string& key, const std::string& value)
+        : Command("SET", key, value) {}
+};
+
+// File commands: SAVE filename, LOAD filename
+class SaveCommand : public Command {
+public:
+    explicit SaveCommand(const std::string& filename)
+        : Command("SAVE", filename) {}
+};
+
 class LoadCommand : public Command {
 public:
-    LoadCommand(const std::string& filename);
+    explicit LoadCommand(const std::string& filename)
+        : Command("LOAD", filename) {}
 };
+
+// No-argument commands
 class ExitCommand : public Command {
+public:
+    ExitCommand()
+        : Command("EXIT") {}
 };
+
 class KeysCommand : public Command {
+public:
+    KeysCommand()
+        : Command("KEYS") {}
 };
-class InvalidCommand : public Command{
+
+// Used when parsing fails
+class InvalidCommand : public Command {
+public:
+    InvalidCommand()
+        : Command("INVALID") {}
 };
-#endif //COMMANDSONS_H
+
+#endif // COMMANDSONS_H
