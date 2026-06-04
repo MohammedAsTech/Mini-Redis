@@ -2,6 +2,7 @@
 #include "Database.h"
 #include "Persistence.h"
 #include "Command.h"
+
 #include <exception>
 #include <iostream>
 #include <string>
@@ -16,7 +17,11 @@ int main() {
     while (std::getline(std::cin, line)) {
         try {
             auto command = parser.parse(line);
+
             command->execute(db, persistence);
+
+            // Save only successfully executed commands.
+            db.addToHistory(line);
         }
         catch (const std::exception& e) {
             std::cout << e.what() << std::endl;

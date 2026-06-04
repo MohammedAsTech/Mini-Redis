@@ -3,19 +3,15 @@
 
 #include "Command.h"
 
-#include <iostream>
 #include <string>
 
 class Database;
 class Persistence;
 
 class GetCommand : public Command {
-private:
-    std::string key;
-
 public:
     explicit GetCommand(const std::string& key)
-        : key(key) {}
+        : Command(key) {}
 
     void execute(Database& db,
                  Persistence& persistence) override;
@@ -23,13 +19,12 @@ public:
 
 class SetCommand : public Command {
 private:
-    std::string key;
     std::string value;
 
 public:
     SetCommand(const std::string& key,
                const std::string& value)
-        : key(key),
+        : Command(key),
           value(value) {}
 
     void execute(Database& db,
@@ -37,24 +32,18 @@ public:
 };
 
 class DelCommand : public Command {
-private:
-    std::string key;
-
 public:
     explicit DelCommand(const std::string& key)
-        : key(key) {}
+        : Command(key) {}
 
     void execute(Database& db,
                  Persistence& persistence) override;
 };
 
 class ExistsCommand : public Command {
-private:
-    std::string key;
-
 public:
     explicit ExistsCommand(const std::string& key)
-        : key(key) {}
+        : Command(key) {}
 
     void execute(Database& db,
                  Persistence& persistence) override;
@@ -86,15 +75,20 @@ public:
 
 class KeysCommand : public Command {
 public:
+    KeysCommand() = default;
+
     void execute(Database& db,
                  Persistence& persistence) override;
 };
 
 class ExitCommand : public Command {
 public:
+    ExitCommand() = default;
+
     void execute(Database& db,
                  Persistence& persistence) override;
 };
+
 class HistoryCommand : public Command {
 public:
     HistoryCommand() = default;
@@ -116,4 +110,5 @@ public:
     void execute(Database& db,
                  Persistence& persistence) override;
 };
+
 #endif // COMMANDSONS_H

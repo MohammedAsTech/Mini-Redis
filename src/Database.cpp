@@ -57,11 +57,14 @@ bool Database::renameKey(const string& oldKey,
 
     return true;
 }
-void Database::addToHistory(const string& commandLine) {
+void Database::addToHistory(const std::string& commandLine) {
+    if (history.size() >= MAX_HISTORY) {
+        history.pop_front();
+    }
     history.push_back(commandLine);
 }
 
-const vector<string>& Database::getHistory() const {
+const deque<string>& Database::getHistory() const {
     return history;
 }
 

@@ -43,14 +43,14 @@ void Persistence::loadFromFile(
 
     while (std::getline(in, line)) {
 
-        std::size_t pos = line.find('=');
+        std::size_t pos = line.find(" = ");
 
         if (pos == std::string::npos) {
             throw std::runtime_error("Corrupted file");
         }
 
         std::string key = line.substr(0, pos);
-        std::string value = line.substr(pos + 1);
+        std::string value = line.substr(pos + 3);
 
         temp[key] = value;
     }

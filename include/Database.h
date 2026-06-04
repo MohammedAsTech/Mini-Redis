@@ -12,11 +12,13 @@
 using namespace std;
 using std::string;
 using std::vector;
+#include <deque>
 
 class Database {
 private:
     unordered_map<string,string> db;
-    std::vector<std::string> history;
+    std::deque<std::string> history;
+    static constexpr std::size_t MAX_HISTORY = 20;
 public:
     Database() = default;
     ~Database() = default;
@@ -46,7 +48,7 @@ public:
 
     void addToHistory(const std::string& commandLine);
 
-    const std::vector<std::string>& getHistory() const;
+    const std::deque<std::string>& getHistory() const;
 
 };
 

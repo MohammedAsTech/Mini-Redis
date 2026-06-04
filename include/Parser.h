@@ -10,6 +10,7 @@ class CommandParser;
 class Parser {
 public:
     Parser();
+    virtual ~Parser();
 
     // Convert raw input into a command object.
     std::unique_ptr<Command> parse(const std::string& line) const;

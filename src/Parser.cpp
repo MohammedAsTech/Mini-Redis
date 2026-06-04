@@ -158,7 +158,7 @@ public:
 Parser::Parser() {
     registerCommands();
 }
-
+Parser:: ~Parser() = default;
 // Main parser entry point.
 std::unique_ptr<Command> Parser::parse(
     const std::string& line
