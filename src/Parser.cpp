@@ -1,53 +1,141 @@
 #include "Parser.h"
 
-#include "CommandSons.h"
 #include "Command.h"
-#include <vector>
+#include "CommandSons.h"
+
 #include <cctype>
+#include <functional>
+#include <memory>
 #include <sstream>
-using namespace std;
+#include <string>
+
+namespace {
+
+// Remove leading and trailing spaces.
+std::string trim(const std::string& str) {
+    std::size_t start = 0;
+
+    while (start < str.size() &&
+           std::isspace(static_cast<unsigned char>(str[start]))) {
+        ++start;
+    }
+
+    std::size_t end = str.size();
+
+    while (end > start &&
+           std::isspace(static_cast<unsigned char>(str[end - 1]))) {
+        --end;
+    }
+
+    return str.substr(start, end - start);
+}
+
+}
+
+// Base interface for parsing strategies.
+class CommandParser {
+public:
+    virtual ~CommandParser() = default;
+
+    virtual std::unique_ptr<Command>
+    parse(const std::string& args) const = 0;
+};
+
+// GET / DEL / EXISTS
+class OneKeyCommandParser : public CommandParser {
+public:
+    using Creator =
+        std::function<std::unique_ptr<Command>(const std::string&)>;
+
+    explicit OneKeyCommandParser(Creator creator)
+        : creator(std::move(creator)) {}
+
+    std::unique_ptr<Command> parse(
+        const std::string& args
+    ) const override {
+        std::istringstream iss(trim(args));
+
+        std::string key;
+        std::string extra;
+
+        if (!(iss >> key)) {
+            return std::make_unique<InvalidCommand>();
+        }
+
+        if (iss >> extra) {
+            return std::make_unique<InvalidCommand>();
+        }
+
+        return creator(key);
+    }
+
+private:
+    Creator creator;
+};
+
+// KEYS / EXIT
+class NoArgCommandParser : public CommandParser {
+public:
+    using Creator =
+        std::function<std::unique_ptr<Command>()>;
+
+    explicit NoArgCommandParser(Creator creator)
+        : creator(std::move(creator)) {}
+
+    std::unique_ptr<Command> parse(
+        const std::string& args
+    ) const override {
+        if (!trim(args).empty()) {
+            return std::make_unique<InvalidCommand>();
+        }
+
+        return creator();
+    }
+
+private:
+    Creator creator;
+};
+
+// SAVE / LOAD
+class FileCommandParser : public OneKeyCommandParser {
+public:
+    using OneKeyCommandParser::OneKeyCommandParser;
+};
+
+// SET key value...
+class SetCommandParser : public CommandParser {
+public:
+    std::unique_ptr<Command> parse(
+        const std::string& args
+    ) const override {
+        std::istringstream iss(trim(args));
+
+        std::string key;
+
+        if (!(iss >> key)) {
+            return std::make_unique<InvalidCommand>();
+        }
+
+        std::string value;
+        std::getline(iss, value);
+        value = trim(value);
+
+        if (value.empty()) {
+            return std::make_unique<InvalidCommand>();
+        }
+
+        return std::make_unique<SetCommand>(key, value);
+    }
+};
 
 Parser::Parser() {
-
-    std::vector<OneArgRegistration> oneKeyCommands = {
-        {"GET", [](const std::string& key) -> std::unique_ptr<Command> {
-            return std::make_unique<GetCommand>(key);
-        }},
-        {"DEL", [](const std::string& key) -> std::unique_ptr<Command> {
-            return std::make_unique<DelCommand>(key);
-        }},
-        {"EXISTS", [](const std::string& key) -> std::unique_ptr<Command> {
-            return std::make_unique<ExistsCommand>(key);
-        }}
-    };
-
-    registerOneKeyCommands(oneKeyCommands);
-
-    std::vector<NoArgRegistration> noArgCommands = {
-        {"KEYS", []() -> std::unique_ptr<Command> {
-            return std::make_unique<KeysCommand>();
-        }},
-        {"EXIT", []() -> std::unique_ptr<Command> {
-            return std::make_unique<ExitCommand>();
-        }}
-    };
-
-    registerNoArgCommands(noArgCommands);
-
-    std::vector<OneArgRegistration> fileCommands = {
-        {"SAVE", [](const std::string& filename) -> std::unique_ptr<Command> {
-            return std::make_unique<SaveCommand>(filename);
-        }},
-        {"LOAD", [](const std::string& filename) -> std::unique_ptr<Command> {
-            return std::make_unique<LoadCommand>(filename);
-        }}
-    };
-
-    registerFileCommands(fileCommands);
-
-    registerSetCommand();
+    registerCommands();
 }
-std::unique_ptr<Command> Parser::parse(const std::string& line) const {
+
+// Main parser entry point.
+std::unique_ptr<Command> Parser::parse(
+    const std::string& line
+) const {
     std::string cleanedLine = trim(line);
 
     if (cleanedLine.empty()) {
@@ -69,122 +157,66 @@ std::unique_ptr<Command> Parser::parse(const std::string& line) const {
         return std::make_unique<InvalidCommand>();
     }
 
-    return it->second(args);
-}
-// Registers commands like GET, DEL, EXISTS.
-void Parser::registerOneKeyCommands(
-    const std::vector<OneArgRegistration>& commands
-) {
-    for (const auto& command : commands) {
-        parsers[command.name] =
-            [creator = command.creator](const std::string& args) {
-                return parseOneKeyCommand(args, creator);
-        };
-    }
+    return it->second->parse(args);
 }
 
-// Registers commands like KEYS, EXIT.
-void Parser::registerNoArgCommands(
-    const std::vector<NoArgRegistration>& commands
-) {
-    for (const auto& command : commands) {
-        parsers[command.name] =
-            [creator = command.creator](const std::string& args) {
-                return parseNoArgCommand(args, creator);
-        };
-    }
-}
-// Registers commands like SAVE, LOAD.
-void Parser::registerFileCommands(
-    const std::vector<OneArgRegistration>& commands
-) {
-    for (const auto& command : commands) {
-        parsers[command.name] =
-            [creator = command.creator](const std::string& args) {
-                return parseFileCommand(args, creator);
-        };
-    }
-}
-// SET is registered separately because it has key + multi-word value.
-void Parser::registerSetCommand() {
-    parsers["SET"] = [](const std::string& args) {
-        return parseSet(args);
-    };
-}
+// Build the command registry.
+void Parser::registerCommands() {
 
-// Parses: SET key value-with-spaces
-std::unique_ptr<Command> Parser::parseSet(const std::string& args) {
-    std::istringstream iss(trim(args));
+    parsers["SET"] =
+        std::make_unique<SetCommandParser>();
 
-    std::string key;
-    if (!(iss >> key)) {
-        return std::make_unique<InvalidCommand>();
-    }
+    parsers["GET"] =
+        std::make_unique<OneKeyCommandParser>(
+            [](const std::string& key)
+            -> std::unique_ptr<Command> {
+                return std::make_unique<GetCommand>(key);
+            }
+        );
 
-    std::string value;
-    std::getline(iss, value);
-    value = trim(value);
+    parsers["DEL"] =
+        std::make_unique<OneKeyCommandParser>(
+            [](const std::string& key)
+            -> std::unique_ptr<Command> {
+                return std::make_unique<DelCommand>(key);
+            }
+        );
 
-    if (value.empty()) {
-        return std::make_unique<InvalidCommand>();
-    }
+    parsers["EXISTS"] =
+        std::make_unique<OneKeyCommandParser>(
+            [](const std::string& key)
+            -> std::unique_ptr<Command> {
+                return std::make_unique<ExistsCommand>(key);
+            }
+        );
 
-    return std::make_unique<SetCommand>(key, value);
-}
-// Parses exactly one argument.
-std::unique_ptr<Command> Parser::parseOneKeyCommand(
-    const std::string& args,
-    const OneArgCreator& creator
-) {
-    std::istringstream iss(trim(args));
+    parsers["KEYS"] =
+        std::make_unique<NoArgCommandParser>(
+            []() -> std::unique_ptr<Command> {
+                return std::make_unique<KeysCommand>();
+            }
+        );
 
-    std::string key;
-    std::string extra;
+    parsers["EXIT"] =
+        std::make_unique<NoArgCommandParser>(
+            []() -> std::unique_ptr<Command> {
+                return std::make_unique<ExitCommand>();
+            }
+        );
 
-    if (!(iss >> key)) {
-        return std::make_unique<InvalidCommand>();
-    }
+    parsers["SAVE"] =
+        std::make_unique<FileCommandParser>(
+            [](const std::string& filename)
+            -> std::unique_ptr<Command> {
+                return std::make_unique<SaveCommand>(filename);
+            }
+        );
 
-    if (iss >> extra) {
-        return std::make_unique<InvalidCommand>();
-    }
-
-    return creator(key);
-}
-// Parses commands that should have no arguments.
-std::unique_ptr<Command> Parser::parseNoArgCommand(
-    const std::string& args,
-    const NoArgCreator& creator
-) {
-    if (!trim(args).empty()) {
-        return std::make_unique<InvalidCommand>();
-    }
-
-    return creator();
-}
-
-// Same syntax as one-key command, but the argument means filename.
-std::unique_ptr<Command> Parser::parseFileCommand(
-    const std::string& args,
-    const OneArgCreator& creator
-) {
-    return parseOneKeyCommand(args, creator);
-}
-// Removes spaces from beginning and end.
-std::string Parser::trim(const std::string& str) {
-    std::size_t start = 0;
-
-    while (start < str.size() &&
-           std::isspace(static_cast<unsigned char>(str[start]))) {
-        ++start;
-           }
-
-    std::size_t end = str.size();
-
-    while (end > start &&
-           std::isspace(static_cast<unsigned char>(str[end - 1]))) {
-        --end;
-           }
-
-    return str.substr(start, end - start);
+    parsers["LOAD"] =
+        std::make_unique<FileCommandParser>(
+            [](const std::string& filename)
+            -> std::unique_ptr<Command> {
+                return std::make_unique<LoadCommand>(filename);
+            }
+        );
 }
