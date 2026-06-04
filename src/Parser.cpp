@@ -151,3 +151,22 @@ std::unique_ptr<Command> Parser::parseOneKeyCommand(
 
     return creator(key);
 }
+// Parses commands that should have no arguments.
+std::unique_ptr<Command> Parser::parseNoArgCommand(
+    const std::string& args,
+    const NoArgCreator& creator
+) {
+    if (!trim(args).empty()) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    return creator();
+}
+
+// Same syntax as one-key command, but the argument means filename.
+std::unique_ptr<Command> Parser::parseFileCommand(
+    const std::string& args,
+    const OneArgCreator& creator
+) {
+    return parseOneKeyCommand(args, creator);
+}
