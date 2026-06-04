@@ -105,3 +105,29 @@ void Parser::registerFileCommands(
         };
     }
 }
+// SET is registered separately because it has key + multi-word value.
+void Parser::registerSetCommand() {
+    parsers["SET"] = [](const std::string& args) {
+        return parseSet(args);
+    };
+}
+
+// Parses: SET key value-with-spaces
+std::unique_ptr<Command> Parser::parseSet(const std::string& args) {
+    std::istringstream iss(trim(args));
+
+    std::string key;
+    if (!(iss >> key)) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    std::string value;
+    std::getline(iss, value);
+    value = trim(value);
+
+    if (value.empty()) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    return std::make_unique<SetCommand>(key, value);
+}
