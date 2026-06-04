@@ -131,3 +131,23 @@ std::unique_ptr<Command> Parser::parseSet(const std::string& args) {
 
     return std::make_unique<SetCommand>(key, value);
 }
+// Parses exactly one argument.
+std::unique_ptr<Command> Parser::parseOneKeyCommand(
+    const std::string& args,
+    const OneArgCreator& creator
+) {
+    std::istringstream iss(trim(args));
+
+    std::string key;
+    std::string extra;
+
+    if (!(iss >> key)) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    if (iss >> extra) {
+        return std::make_unique<InvalidCommand>();
+    }
+
+    return creator(key);
+}
